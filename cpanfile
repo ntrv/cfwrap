@@ -4,3 +4,4 @@
 requires 'JSON::XS';
 requires 'File::Temp';
 requires 'File::Slurp::Tiny';
+requires 'Getopt::Kingpin';
