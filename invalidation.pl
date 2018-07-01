@@ -49,12 +49,16 @@ sub pfile{
 }
 
 sub main{
-  my $kingpin = Getopt::Kingpin->new("perl $0", 'aws-cli Wrapper for CloudFront');
-  my $distribution_id = $kingpin->flag('distribution-id', '')->required->string;
-  my $paths = $kingpin->arg('paths', '')->required->string_list;
-  my $dryrun = $kingpin->flag('dryrun', '')->default(0)->bool;
+  my $kingpin = Getopt::Kingpin->new(
+    name => "perl $0",
+    description => 'aws-cli Wrapper for CloudFront'
+  );
+  $kingpin->flags->get('help')->short('h');
+  my $distribution_id = $kingpin->flag('distribution-id', "The distribution's id.")->required->string;
+  my $paths = $kingpin->arg('paths', 'The space-separated  paths to be invalidated.')->required->string_list;
+  my $dryrun = $kingpin->flag('dryrun', "Don't make any changes.")->short('d')->default(0)->bool;
 
-  $kingpin->parse;
+  my $cmd = $kingpin->parse;
 
   my $batch_json_path = &tmpfile(&batch_json(\@{$paths->value}));
   &pfile($batch_json_path);
