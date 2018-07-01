@@ -10,6 +10,9 @@ use strict;
 use JSON::XS qw/encode_json/;
 use File::Temp qw/tempfile/;
 use File::Slurp::Tiny qw/read_file/;
+# use Getopt::Long qw/:config posix_default no_ignore_case gnu_compat/;
+use Getopt::Kingpin;
+use Data::Dumper;
 
 sub batch_json{
   my @items = @_;
@@ -48,12 +51,16 @@ sub pfile{
 }
 
 sub main{
-  my $distribution_id = shift @ARGV;
-  my @paths = \@ARGV;
 
-  my $batch_json_path = &tmpfile(&batch_json(@paths));
+  my $kingpin = Getopt::Kingpin->new("perl $0", 'aws-cli Wrapper for CloudFront');
+  my $distribution_id = $kingpin->flag('distribution-id', '')->required->string;
+  my $paths = $kingpin->arg('paths', '')->required->string_list;
 
+  $kingpin->parse;
+
+  my $batch_json_path = &tmpfile(&batch_json(\@{$paths->value}));
   &pfile($batch_json_path);
+
   my $command = &cf_cmd($distribution_id, $batch_json_path);
   print $command;
 }
