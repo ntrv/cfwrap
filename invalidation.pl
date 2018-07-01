@@ -52,6 +52,7 @@ sub main{
   my $kingpin = Getopt::Kingpin->new("perl $0", 'aws-cli Wrapper for CloudFront');
   my $distribution_id = $kingpin->flag('distribution-id', '')->required->string;
   my $paths = $kingpin->arg('paths', '')->required->string_list;
+  my $dryrun = $kingpin->flag('dryrun', '')->default(0)->bool;
 
   $kingpin->parse;
 
@@ -60,6 +61,9 @@ sub main{
 
   my $command = &cf_cmd($distribution_id, $batch_json_path);
   print $command;
+  unless ($dryrun) {
+    system($command);
+  }
 }
 
 &main;
