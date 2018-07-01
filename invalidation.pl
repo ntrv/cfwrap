@@ -10,9 +10,7 @@ use strict;
 use JSON::XS qw/encode_json/;
 use File::Temp qw/tempfile/;
 use File::Slurp::Tiny qw/read_file/;
-# use Getopt::Long qw/:config posix_default no_ignore_case gnu_compat/;
 use Getopt::Kingpin;
-use Data::Dumper;
 
 sub batch_json{
   my @items = @_;
@@ -51,7 +49,6 @@ sub pfile{
 }
 
 sub main{
-
   my $kingpin = Getopt::Kingpin->new("perl $0", 'aws-cli Wrapper for CloudFront');
   my $distribution_id = $kingpin->flag('distribution-id', '')->required->string;
   my $paths = $kingpin->arg('paths', '')->required->string_list;
